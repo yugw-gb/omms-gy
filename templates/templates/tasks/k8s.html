@@ -1,0 +1,175 @@
+{% extends "base/base_site.html" %}
+{% load	bootstrap3 %}
+{% block css %}
+    <link rel="stylesheet" type="text/css" href="/static/css/plugins/chosen/chosen.css">
+    {{ block.super }}
+    <style>
+        .col-center-block {
+            float: none;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+    </style>
+
+{% endblock %}
+{% block content %}
+
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="ibox float-e-margins">
+                <div class="ibox-content pre-scrollable" style="max-height: 390px;">
+                    <h2>
+                        K8S安装说明：
+                        <div class="hr-line-solid"></div>
+                    </h2>
+
+                    <h3 style="font-style:italic;">准备工作</h3>
+                    <p>按照多主多节点示例的节点配置，准备4台虚机，搭建一个多主高可用集群。</p>
+                    <h4>1.基础系统配置</h4>
+                    <ul>
+                        <li>推荐内存2G/硬盘30G以上</li>
+                        <li>最小化安装<code>Ubuntu 16.04 server</code>或者<code>CentOS 7 Minimal</code></li>
+                        <li>配置基础网络、更新源、SSH登陆等</li>
+                    </ul>
+                    <h4>2.在每个节点安装依赖工具</h4>
+                    <p>Ubuntu 16.04 请执行以下脚本:</p>
+                    <div class="highlight highlight-source-shell">
+<pre>
+<span class="pl-c"><span class="pl-c">#</span> 文档中脚本默认均以root用户执行</span>
+apt-get update <span class="pl-k">&amp;&amp;</span> apt-get upgrade -y <span class="pl-k">&amp;&amp;</span> apt-get dist-upgrade -y
+<span class="pl-c"><span class="pl-c">#</span> 安装python2</span>
+apt-get install python2.7
+<span class="pl-c"><span class="pl-c">#</span> Ubuntu16.04可能需要配置以下软连接</span>
+ln -s /usr/bin/python2.7 /usr/bin/python</pre>
+                    </div>
+                    <p>CentOS 7 请执行以下脚本：</p>
+                    <div class="highlight highlight-source-shell">
+<pre>
+<span class="pl-c"><span class="pl-c">#</span> 文档中脚本默认均以root用户执行</span>
+<span class="pl-c"><span class="pl-c">#</span> 安装 epel 源并更新</span>
+yum install epel-release -y
+yum update
+<span class="pl-c"><span class="pl-c">#</span> 安装python</span>
+yum install python -y</pre>
+                    </div>
+                    <h4>3.在omms节点安装及准备ansible</h4>
+                    <p>pip 安装 ansible</p>
+                    <div class="highlight highlight-source-shell">
+<pre>
+<span class="pl-c"><span class="pl-c">#</span> Ubuntu 16.04 </span>
+apt-get install git python-pip -y
+<span class="pl-c"><span class="pl-c">#</span> CentOS 7</span>
+yum install git python-pip -y
+<span class="pl-c"><span class="pl-c">#</span> pip安装ansible(国内如果安装太慢可以直接用pip阿里云加速)</span>
+<span class="pl-c"><span class="pl-c">#</span>pip install pip --upgrade</span>
+<span class="pl-c"><span class="pl-c">#</span>pip install ansible</span>
+pip install pip --upgrade -i http://mirrors.aliyun.com/pypi/simple/ --trusted-host mirrors.aliyun.com
+pip install --no-cache-dir ansible -i http://mirrors.aliyun.com/pypi/simple/ --trusted-host mirrors.aliyun.com</pre>
+                    </div>
+                    <div class="hr-line-dashed"></div>
+
+                </div>
+                <div class="hr-line-dashed"></div>
+                <div class="form-group">
+                    <div class="col-sm-6 col-sm-offset-6">
+                        <a class="btn btn-sm btn-primary btn-import" data-toggle="modal"
+                           data-target="#importHostsModal">导入hosts</a>
+                        <button class="btn btn-success" type="submit" id="k8s_install">已阅，开始安装</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% include 'tasks/k8s-install.html' %}
+    </div>
+    {% include 'tasks/k8s_modal.html' %}
+{% endblock %}
+
+{% block javascripts %}
+    {{ block.super }}
+
+    <script>
+        initFileInput("file-Portrait", "/tasks/upload_hosts_file/");
+
+        //初始化fileinput控件（第一次初始化）
+        function initFileInput(ctrlName, uploadUrl) {
+            var control = $('#' + ctrlName);
+
+            control.fileinput({
+                language: 'zh', //设置语言
+                uploadUrl: uploadUrl, //上传的地址
+                allowedFileExtensions: ['omms'],//接收的文件后缀
+                maxFileCount: 2,
+                enctype: 'multipart/form-data',
+                showUpload: true, //是否显示上传按钮
+                showCaption: false,                                  // 显示文件文本框
+                dropZoneEnabled: true,                          // 是否可拖拽
+                showRemove: true,                                       // 显示移除按钮
+                uploadClass: "btn btn-primary",
+                browseClass: "btn btn-primary", //按钮样式
+                previewFileIcon: "<i class='glyphicon glyphicon-king'></i>",
+                msgFilesTooMany: "选择上传的文件数量({n}) 超过允许的最大数值{m}！",
+            }).on("fileuploaded", function (event, data, previewId, index) {
+                layer.msg("上传成功");
+                setTimeout("closeUpladLayer()", 2000);
+                setTimeout("window.location = '/tasks/k8s/'", 1000);
+            });
+        }
+
+    </script>
+
+
+
+    <script>
+        function sc() {
+            var div = document.getElementById("show-chat-content");
+            div.scrollTop = div.scrollHeight;
+        }
+
+        $('#k8s_install').on('click', function () {
+            var url = "/tasks/software_install/"
+            var data = {"task_type": 'install', 'service_name': 'k8s'};
+            data = JSON.stringify(data);
+            $.get(url, {data: data}, function () {
+            });
+            this.disabled = true;
+            var socket = new WebSocket("ws://" + window.location.host + "/tasks/flush_log/");
+            console.log(socket);
+            socket.onopen = function () {
+                // alert('WebSocket open')
+                console.log('WebSocket open');//成功连接上Websocket
+                //socket.send("123");//发送数据到服务端
+            };
+            socket.onmessage = function (e) {
+                $("#log_info").append('<font color="green">' + e.data + '</font><br>');
+                var s = setInterval(sc(), 1000);
+            };
+            socket.onclose = function () {
+                console.log('WebSocket close');
+                socket.close();
+            };
+        });
+    </script>
+
+
+    <script>
+        /*
+            *ajax get callback
+            */
+        function ajax_callback(msg) {
+            var msg = $.parseJSON(msg);
+            var index = layer.alert(msg, { //layer控件提示信息
+                skin: 'layui-layer-molv' //样式类名
+            }, function () {
+                if (msg == '成功') {
+                    window.location = "/tasks/k8s/";
+                } else if (msg == '失败') {
+                    window.location = "/tasks/k8s/";
+                } else {
+                    layer.close(index)
+                }
+            });
+        }
+
+    </script>
+{% endblock %}
