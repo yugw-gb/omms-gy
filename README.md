@@ -3,7 +3,7 @@ OMMS 运维监控管理系统
 [![Python Version](https://img.shields.io/badge/Python--3.6.2-paasing-green.svg)](https://img.shields.io/badge/Python--3.6.2-paasing-green.svg)
 [![Django Version](https://img.shields.io/badge/Django--2.1.4-paasing-green.svg)](https://img.shields.io/badge/Django--2.1.4-paasing-green.svg)
 
-项目作者：`小瓶盖`
+原项目作者：`小瓶盖`
 
 > OMMS现有功能: （扫描下方微信邀请入群，请备注姓名@公司）
 
@@ -36,20 +36,3 @@ OMMS 运维监控管理系统
     </tr>
 </table>
 
-
-沟通交流
-=========================
-写Python代码是我的业余爱好，单纯运维才是主业，无论哪个都欢迎交流。人脉也是一项重要能力，请备注姓名@公司，谢谢：）
-不一定要你给赞赏，芸芸众生，相遇相识是一种缘份。不过可以给点个star，或者加个好友吼
-<br>
-<img src="https://images.gitee.com/uploads/images/2019/0129/172228_8aabccd0_1521920.jpeg" width="244" height="314" alt="小瓶盖微信" align=left />
-
-<img src="https://images.gitee.com/uploads/images/2019/0129/171904_f6efc3e7_1521920.jpeg" width="220" height="220" alt="微信赞赏码" style="float: left;"/>
-<img src="https://images.gitee.com/uploads/images/2019/0129/172138_4a5aa6bc_1521920.jpeg" width="220" height="220" alt="支付宝赞赏码" style="float: left;"/>
-<br><br><br>
-
-致谢与支持
-=========================
-感谢所有为项目提出问题的贡献者！感谢捐赠鼓励！<br>
-可以通过主站搜索淘宝优惠券领券购物，可以省不少钱哦！主站：http://www.smallmi.com <br>
-项目演示：https://demo.smallmi.com
